@@ -3,7 +3,11 @@ cwd = os.getcwd()
 os_name =  sys.platform
 print("Docker OS : "+ os_name)
 print("")
-print("Red")
-print("Orange")
-print("Pink")
-print("Blue")
+
+a= 0
+b= 1
+for i in xrange(10):
+	print(a)
+	n = a+b
+	a = b
+	b = n

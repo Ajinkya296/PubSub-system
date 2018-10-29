@@ -1,17 +1,21 @@
 var express = require('express');
 var bodyParser = require('body-parser')
-//const Docker = require('node-docker-api').Docker
 var Docker = require('dockerode');
  tar = require('tar-fs')
 var fs = require('fs');
 var app = express();
+var Writable = require('stream').Writable;
+
+
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+
 app.get('/', function (req, res) {
    res.sendFile('index.html',{ root : __dirname});
 })
+
 
 app.post('/send', function (req, res) {
 	const BASE_PATH = "C:/Users/ajink/.docker/machine/machines/default/";
@@ -34,11 +38,30 @@ app.post('/send', function (req, res) {
 	await new Promise((resolve, reject) => {
   	dockerode.modem.followProgress(stream, (err, res) => err ? reject(err) : resolve(res));
 */
-  	docker.run('pytest-img', process.stdout, function (err, data, container) {
-  		console.log(err)
-	 	console.log(container);
-	 	res.send(container)
-		});
+
+	var myStream = new Writable();
+    var output = ''
+
+    myStream._write = function write(doc, encoding, next) {
+      var StringDecoder = require('string_decoder').StringDecoder;
+      var decoder = new StringDecoder('utf8');
+      var result = decoder.write(doc);
+      output += result;
+      next()
+      // resolve(result);  // Moved the resolve to the handler, which fires at the end of the stream
+    };
+
+    function handler(error, data, container) {
+      if (error) {
+        console.log({ 'status': 'error', 'message': error });
+      }
+      console.log("\n"+output)
+      res.send(output)
+    };
+
+    file_to_run = req.body.filename
+    console.log(file_to_run)
+  	docker.run('pytest-img',[ "python", "./"+file_to_run ], myStream, {}, handler)
 
 	/*
 	
