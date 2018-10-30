@@ -22,7 +22,7 @@
 	    contentType: 'application/json; charset=utf-8',
 	    success:function(result)
 	    		{
-	    			console.log(result);
+	    			$("#output_area").val(result)
 	    		}
 	  });
 	});
@@ -41,7 +41,7 @@
 			</div>
 		
 			<div class="flex-item">
-				<textarea rows="10" cols="50"> 
+				<textarea id="output_area" rows="15" cols="50"> 
 				</textarea>
 			</div>
 		</div>
