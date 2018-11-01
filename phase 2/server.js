@@ -188,8 +188,8 @@ function dispatch_events()
 		// check emptiness and return 
 		if(events.length == 0 || subscribers.length == 0)
 		{
-			console.log("No events/subscriber to deliver (empty)")
-			return
+			console.log("No events/subscriber to deliver (empty) for %s" , topic)
+			continue
 		}
 
 		for(var subscriber_id of subscribers)
