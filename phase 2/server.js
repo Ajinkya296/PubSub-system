@@ -84,7 +84,6 @@ subscriptions =  new Subscription()
 eventQueues   =  new EventQueues()
 
 
-
 clientWebSockets = {}  // id : websocket
 
 io.on('connection', function (websocket,req) {
@@ -173,22 +172,19 @@ function dispatch_events()
 		events = eventQueues.hashMap[topic]
 		subscribers = subscriptions.hashMap[topic]
 		
-		if(events == undefined) 
+		if(events == undefined || events.length == 0) 
 		{
-			console.log("No events witnessed yet (non-exist)")
-
-			return
-		}
-		if(subscribers == undefined)
-		{
-			console.log("No subscriber witnessed yet (non-exist)")
-			return
+			console.log("No events witnessed yet ")
+			continue
 		}
 
-		// check emptiness and return 
-		if(events.length == 0 || subscribers.length == 0)
+		if(subscribers == undefined || subscribers.length == 0)
 		{
-			console.log("No events/subscriber to deliver (empty) for %s" , topic)
+			console.log("No subscriber witnessed yet , events dropped")
+			while(events.length != 0 )	
+				{
+					event =  events.shift()
+				}
 			continue
 		}
 
@@ -215,52 +211,7 @@ app.get('/', function (req, res) {
 
    	res.sendFile('index.html',{ root : __dirname});
 })
-/*
-app.get('/publish', function (req, res) {
-   
-   publisher_id	= req.body.publisher_id
-   topic_name 	= req.body.topic
-   message    	= req.body.message
 
-   eventQueues.add(topic_name,message)
-   res.send("Event successfully logged")
-
-})
-
-function dispatch_events()
-{
-	for(var topic in Object.keys(eventQueues))
-	{
-		events = get_events(topic)
-		for(var subscriber in subscriptions)
-			{
-
-			}	
-	}
-	
-}
-
-app.get('/subscribe', function (req, res) {
-   
-   subscriber_id	= req.body.subscriber_id
-   topic_name 		= req.body.topic
-
-   subscriptions.add(topic_name,subscriber_id)
-})
-
-app.get('/unsubscribe', function (req, res) {
-   
-   subscriber_id	= req.body.subscriber_id
-   topic_name 		= req.body.topic
-
-   subscriptions.remove(topic_name,subscriber_id)
-})
-
-
-http.listen(8080, function(){
-  console.log('listening on *:8080');
-});
-*/
 var server 	= app.listen(8080, 'localhost', function () {
    var host = server.address().address
    var port = server.address().port
