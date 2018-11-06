@@ -58,17 +58,30 @@
       .list-group{
                     padding-top: 20px
                   }
+      .area{
+              margin : 30px;
+              margin-top: 100px;
+              background-color: grey;
+              height: 80%;
+            }
+      .notif-group{
+                    padding: 0;
+                    text-align: left;
+                  }
       label {
                display: inline-block;
             }
-      body { font: 13px Helvetica, Arial; }
       #messages { list-style-type: none; margin: 0; padding: 0; }
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
     </style>
     <script>
       subscriptions = { "1" : ["A","B","C"] , "2" : ["P","Q","R"]}
+ 
       $(function () {
+               addNotif()
+        addNotif()
+        addNotif()
       	var connection_UI = new WebSocket('ws://localhost:3000');
       	connection_UI.onmessage = function (e) {
       		      data =  JSON.parse(e.data)
@@ -77,17 +90,18 @@
                     subscriptions = data
                 }
                 console.log(e.data);
+
     	       };	
         $('select').on('change', function(e){
           topic =  this.value
-          addDOMList(subscriptions,topic)
+          addSubscriberList(subscriptions,topic)
           console.log(this.value);
         });
         
         
       });
 
-      function addDOMList(subscriptions,topic) {
+      function addSubscriberList(subscriptions,topic) {
 
           var ul = document.getElementById("list");
           ul.innerHTML = ''
@@ -101,7 +115,26 @@
             ul.appendChild(li);
           }
         };
-
+        function addNotif() {
+          type = notif.type
+          switch(type)
+          {
+            case "PUB": text = "Publisher " + notif.user_id + " pubished " +  notif.message + " on " + notif.topic
+                        break;
+            case "SUB": 
+                        break;
+            case "DIS": 
+                        break;
+          }
+          var ul = document.getElementById("notif");
+          var li = document.createElement("li");
+          var div_elem = document.createElement("div");
+          div_elem.appendChild(document.createTextNode("text"));
+          li.appendChild(div_elem);
+          li.setAttribute("class", "list-group-item"); 
+          li.setAttribute("style", "background-color:#f1f2f6; color: #495057;font-size: 1.25em ;  padding: 0.5rem 0.5rem;");
+          ul.appendChild(li);
+        };
 </script>
   </head>
   <body>
@@ -109,7 +142,7 @@
       <div class="row " >
           <div class="column  left_column">
             <div class = "centre_div center-block">
-                <p >Subscriptions</p>
+                <h3 >Subscriptions</h3>
                 <select class="form-control" id="sel1">
                   <option  selected disabled>Choose a topic</option>
                   <option>1</option>
@@ -120,7 +153,12 @@
                 <ul id="list" class= "list-group">  </ul>
             </div>
           </div>
-          <div class="column right_column">.col-md-8</div>
+          <div class="column right_column">
+            <div class="area">
+                <ul class= "notif-group" id = "notif">
+                </ul>
+            </div>
+          </div>
       </div>
     </div>
 
