@@ -104,13 +104,14 @@ serverSocket.on('connection', function (websocket,req) {
 		    {
 				console.log("Publish received")
 
-				UI_websocket.send( JSON.stringify({ "publisher_id" : user_id, "topic" : msg_parts[1], "message" : msg_parts[2]}))
+				UI_websocket.send( JSON.stringify({ "type" : "PUB" , "user_id" : user_id, "topic" : msg_parts[1], "message" : msg_parts[2]}))
 		    	onPublish( { "topic" : msg_parts[1], "message" : msg_parts[2]} )
 		    	
 
 		    }
 		    else if(msg_type == "SUBSCRIBE")
 		    {
+		    	UI_websocket.send( JSON.stringify({ "type" : "SUB", "user_id" : user_id, "topic" : msg_parts[1], "message" : msg_parts[2]}))
 		    	onSubscribe( { id : user_id , "topic" : msg_parts[1]})	
 		    }
 		    else if(msg_type == "UNSUBCRIBE")
@@ -120,6 +121,16 @@ serverSocket.on('connection', function (websocket,req) {
 
   	})
 })
+
+
+
+
+
+
+
+
+
+
 
 })
 
@@ -159,7 +170,7 @@ function onUnsubscribe(data) {
 // This function will be called with different topic 
 function dispatch_events()
 {
-
+	UI_websocket.send(JSON.stringify(subscriptions.hashMap))
 	console.log("\n******* Dispatching Events *******")
 	topics = Object.keys(eventQueues.hashMap)
 	console.log(topics)
@@ -198,6 +209,7 @@ function dispatch_events()
 				{
 					event =  events.shift()
 					subscriber_socket = clientWebSockets[subscriber_id]
+					UI_websocket.send( JSON.stringify({ "type" : "DIS" , "user_id" : subscriber_id, "topic" : topic, "message" : event}))
 					subscriber_socket.send(event)
 					console.log("Sent to : " + subscriber_id)
 				}
