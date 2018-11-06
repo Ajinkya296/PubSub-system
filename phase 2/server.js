@@ -9,12 +9,13 @@ app.use(bodyParser.urlencoded({
 }));
 
 
-//var http = require('http').Server(app);
-//var io = require('socket.io')(http);
-const io = new WebSocket.Server({host: "localhost", port:3000 });
+const UI_socket 	= new WebSocket.Server({host: "localhost", port:3000 });
+
+const serverSocket 	= new WebSocket.Server({host: "localhost", port:4000 });
+
 console.log("WebSocket server listening at " + "localhost" + ":" + 3000)
 
-
+console.log("UI WebSocket server listening at " + "localhost" + ":" + 4000)
 class Subscription
 {
 	/* Insert new subscriber in list for a topic
@@ -44,9 +45,6 @@ class Subscription
 	{
 		return this.hashMap[topic]
 	}
-
-
-
 }
 
 class EventQueues
@@ -85,8 +83,9 @@ eventQueues   =  new EventQueues()
 
 
 clientWebSockets = {}  // id : websocket
-
-io.on('connection', function (websocket,req) {
+UI_socket.on('connection', function (UI_websocket,req) {
+console.log("UI connected")
+serverSocket.on('connection', function (websocket,req) {
 
 	//store sockets 
 	var user_id =  req.headers['sec-websocket-key']
@@ -96,27 +95,32 @@ io.on('connection', function (websocket,req) {
 	clientWebSockets[user_id].send("You are connected to server") 
 
 	websocket.on('message', function (message) {
-    console.log('received from client %s : %s ', user_id, message)
+		    console.log('received from client %s : %s ', user_id, message)
 
-    msg_parts = message.split("||")
+		    msg_parts = message.split("||")
 
-    msg_type = msg_parts[0]   // PUBLISH or SUBCRIBE
-    if(msg_type == "PUBLISH")
-    {
-    	onPublish( { "topic" : msg_parts[1], "message" : msg_parts[2]})
-    }
-    else if(msg_type == "SUBSCRIBE")
-    {
-    	onSubscribe( { id : user_id , "topic" : msg_parts[1]})	
-    }
-    else if(msg_type == "UNSUBCRIBE")
-    {
-    	onUnsubscribe( { id : user_id ,"topic" : msg_parts[1]})	
-    }
+		    msg_type = msg_parts[0]   // PUBLISH or SUBCRIBE
+		    if(msg_type == "PUBLISH")
+		    {
+				console.log("Publish received")
 
+				UI_websocket.send( JSON.stringify({ "publisher_id" : user_id, "topic" : msg_parts[1], "message" : msg_parts[2]}))
+		    	onPublish( { "topic" : msg_parts[1], "message" : msg_parts[2]} )
+		    	
 
+		    }
+		    else if(msg_type == "SUBSCRIBE")
+		    {
+		    	onSubscribe( { id : user_id , "topic" : msg_parts[1]})	
+		    }
+		    else if(msg_type == "UNSUBCRIBE")
+		    {
+		    	onUnsubscribe( { id : user_id ,"topic" : msg_parts[1]})	
+		    }
 
-  })
+  	})
+})
+
 })
 
 setInterval(dispatch_events,2000)
@@ -208,9 +212,10 @@ function dispatch_events()
 
 
 app.get('/', function (req, res) {
-
    	res.sendFile('index.html',{ root : __dirname});
 })
+
+
 
 var server 	= app.listen(8080, 'localhost', function () {
    var host = server.address().address
