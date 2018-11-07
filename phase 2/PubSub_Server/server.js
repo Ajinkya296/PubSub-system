@@ -90,40 +90,42 @@ console.log("UI connected")
 serverSocket.on('connection', function (websocket,req) {
 
 	//store sockets 
-	var user_id =  req.headers['sec-websocket-key']
+	var user_id = 0 //req.headers['sec-websocket-key']
 	console.log(user_id + " connected")
 	clientWebSockets[user_id] = websocket
 
 	clientWebSockets[user_id].send("You are connected to server") 
 
 	websocket.on('message', function (message) {
-		    console.log('received from client %s : %s ', user_id, message)
 
-		    msg_parts = message.split("||")
+			data = JSON.parse(message)
 
-		    msg_type = msg_parts[0]   // PUBLISH or SUBCRIBE
-		    if(msg_type == "PUBLISH")
+		    console.log('received from client %s : %s ', data.user_id, data.msgText)
+
+		    
+		    msg_type = data.type  // PUBLISH or SUBCRIBE
+		    if(msg_type == "publish")
 		    {
 				console.log("Publish received")
 
-				UI_clientwebsocket.send( JSON.stringify({ "type" : "PUB" , "user_id" : user_id, "topic" : msg_parts[1], "message" : msg_parts[2]}))
-		    	onPublish( { "topic" : msg_parts[1], "message" : msg_parts[2]} )
+				UI_clientwebsocket.send( JSON.stringify({ "type" : "PUB" , "user_id" : data.user_id, "topic" : data.topic, "message" : data.msgText}))
+		    	onPublish( { "topic" : data.topic, "message" : data.msgText} )
 		    	
 
 		    }
-		    else if(msg_type == "SUBSCRIBE")
+		    else if(msg_type == "subscribe")
 		    {
-		    	UI_clientwebsocket.send( JSON.stringify({ "type" : "SUB", "user_id" : user_id, "topic" : msg_parts[1], "message" : msg_parts[2]}))
-		    	onSubscribe( { id : user_id , "topic" : msg_parts[1]})	
+		    	UI_clientwebsocket.send( JSON.stringify({ "type" : "SUB" , "user_id" : data.user_id, "topic" : data.topic}))
+		    	onSubscribe( { id : data.user_id , "topic" : data.msgText})	
 		    }
-		    else if(msg_type == "UNSUBCRIBE")
+		    else if(msg_type == "unsubscribe")
 		    {
 		    	onUnsubscribe( { id : user_id ,"topic" : msg_parts[1]})	
 		    }
 
   	})
 
-setInterval(dispatch_events,2000)
+setInterval(dispatch_events,5000)
 
 
 // This function will be called with different topic 

@@ -86,9 +86,10 @@
                     subscriptions = data
                 }
                 else{
+
+                  console.log(data);
                   addNotif(data)
                 }
-                console.log(e.data);
                 $('select').on('change', function(e){
                   topic =  this.value
                   addSubscriberList(subscriptions,topic)
