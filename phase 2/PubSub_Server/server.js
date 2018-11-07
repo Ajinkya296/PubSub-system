@@ -102,7 +102,6 @@ serverSocket.on('connection', function (websocket,req) {
 
 		    console.log('received from client %s : %s ', data.user_id, data.msgText)
 
-		    
 		    msg_type = data.type  // PUBLISH or SUBCRIBE
 		    if(msg_type == "publish")
 		    {
@@ -181,16 +180,6 @@ function dispatch_events()
 
 
 })
-
-
-
-
-
-
-
-
-
-
 
 })
 

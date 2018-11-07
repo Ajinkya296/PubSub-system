@@ -8,12 +8,37 @@ function generateRandomID(n) {
   return id;
 }
 
+function waitForSocket(websocket)
+{
+  setTimeout(
+    () => {
+      if(websocket.readyState === 1)
+      {
+        console.log("Connected")
+        return
+      }
+      else
+      {
+        console.log("Connecting ...")
+        waitForSocket(websocket)
+      }
+    }
+  ,10)
+}
 class pubsubClient{
 
   constructor(){
     this.ClientWebSocket = new WebSocket("ws://localhost:4000");//server uRL here
     this.id = generateRandomID(4)
+    this.isconnected = false 
+    //waitForSocket(this.ClientWebSocket)
   }
+    connect(){
+      this.ClientWebSocket.onopen = () => { 
+                                              this.isconnected = true ; 
+                                              console.log("Open")
+                                          }
+    }
     publish(topicID, message){
           
           var publishMSG = {
@@ -23,10 +48,9 @@ class pubsubClient{
             msgText: message
           };
           console.log(publishMSG)
-          var that = this
-          this.ClientWebSocket.onopen = function(event){
-            that.ClientWebSocket.send(JSON.stringify(publishMSG));
-          };
+        
+          this.ClientWebSocket.send(JSON.stringify(publishMSG));
+          console.log("Msg sent")
 
     }
     subscribe(topicID){
