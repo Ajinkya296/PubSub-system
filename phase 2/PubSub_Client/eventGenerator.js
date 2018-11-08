@@ -32,7 +32,7 @@ function events_generate(num_clients)
 	}
 	publisherClient[num_clients-1].ClientWebSocket.onopen = function() 
 	{
-		for(i=0;i < 5;i++)
+		for(i=0;i <10;i++)
 		{	
 				sleep(randInt(10,40)*100)
 			    publisherIndex =randInt(0,4)
@@ -46,5 +46,4 @@ function events_generate(num_clients)
 		}
 	}
 }
-
 events_generate(10)

@@ -37,7 +37,7 @@ class Subscription
 			console.log("creating subscriber list for " +  topic)
 			this.hashMap[topic] = [subscriber]
 		}
-
+		console.log(this.hashMap)
 	}
 
 	remove(topic,subscriber)
@@ -143,7 +143,7 @@ function dispatch_events()
 	console.log(topics)
 	if(topics.length == 0)
 	{
-		console.log("No topics registered")
+		console.log("No topics registered\n")
 		return
 	}
 
@@ -170,17 +170,17 @@ function dispatch_events()
 			continue
 		}
 
-		for(var subscriber_id of subscribers)
+		while(events.length != 0)	
+		{
+			event = events.shift()
+			for(var subscriber_id of subscribers)
 			{
-				while(events.length != 0 )	
-				{
-					event =  events.shift()
 					subscriber_socket = clientWebSockets[subscriber_id]
 					UI_clientwebsocket.send( JSON.stringify({ "type" : "DIS" , "user_id" : subscriber_id, "topic" : topic, "message" : event}))
 					subscriber_socket.send(event)
 					console.log("Sent to : " + subscriber_id)
-				}
-			}	
+			}
+		}
 	}
 }
 
@@ -210,7 +210,7 @@ function onSubscribe(data) {
 	subscriber_id	= data.id
    	topic_name 		= data.topic
    	subscriptions.add(topic_name,subscriber_id)
-   	console.log("Subscription successfully added for %s", subscriptions.hashMap)
+   	console.log("Subscription successfully added for %s", topic_name)
 }
 
 function onUnsubscribe(data) {	

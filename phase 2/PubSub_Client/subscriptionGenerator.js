@@ -33,7 +33,7 @@ function subscription_generate(num_clients)
 
 	subscriberClients[num_clients-1].ClientWebSocket.onopen = function() 
 	{
-		for(i = 0 ; i < 5; i++)
+		for(i = 0 ; i < 7; i++)
 		{	
 				sleep(randInt(10,40)*100)
 			    subscriberIndex =	randInt(0,4)

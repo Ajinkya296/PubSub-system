@@ -1,18 +1,31 @@
-function generateRandomID(n) {
+function generateRandomID() {
   var id = "";
-  var alphanumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-  for (var i = 0; i < n; i++)
-    id += alphanumeric.charAt(Math.floor(Math.random() * alphanumeric.length));
+  var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  var numeric = "0123456789"
+  for (var i = 0; i < 2; i++)
+    id += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+  for (var i = 0; i < 2; i++)
+    id += numeric.charAt(Math.floor(Math.random() * numeric.length));
 
   return id;
 }
+function addNotif(notif) {
+  var ul = document.getElementById("notif");
+  var li = document.createElement("li");
 
+  var div_elem = document.createElement("div");
+
+  div_elem.appendChild(document.createTextNode("["+new Date().toLocaleString().split(" ")[1] + "] " + notif));
+  li.appendChild(div_elem);
+  li.setAttribute("class", "list-group-item"); 
+  li.setAttribute("style", "background-color:#f1f2f6; color: #495057;font-size: 1.25em ;  padding: 0.5rem 0.5rem;");
+  ul.appendChild(li);
+};
 class pubsubClient{
 
   constructor(){
     this.ClientWebSocket = new WebSocket("ws://localhost:4000");//server uRL here
-    this.id = generateRandomID(4)
+    this.id = generateRandomID()
   }
     publish(topicID, message){
           
@@ -23,7 +36,7 @@ class pubsubClient{
             msgText: message
           };
           console.log(publishMSG)
-        
+          addNotif("Publisher " + this.id + " sent msg \"" + message +"\" on " + topicID)
           this.ClientWebSocket.send(JSON.stringify(publishMSG));
           console.log("Msg sent")
 
@@ -34,6 +47,7 @@ class pubsubClient{
           type:"subscribe",
           topic: topicID
         };
+        addNotif( "Subscriber "+ this.id +" subscribed to " + topicID)
         this.ClientWebSocket.send(JSON.stringify(subscribeMSG));
         
     }
