@@ -1,5 +1,4 @@
 
-
 topics = ["Sports", "Science", "Politics", "Fashion"]
 
 function randInt(a,b) {
@@ -24,27 +23,28 @@ function sleep( time ){
 }
 
 
-function events_generate(num_clients)
+function subscription_generate(num_clients)
 {
-    var publisherClient = new Array(4)
-	for(i=0; i<num_clients; i++){
-		publisherClient[i]  = new pubsubClient()
-	}
-	publisherClient[num_clients-1].ClientWebSocket.onopen = function() 
+    var subscriberClients = new Array(4)
+	for(i=0; i<num_clients; i++)
 	{
-		for(i=0;i < 5;i++)
+		subscriberClients[i]  = new pubsubClient()
+	}
+
+	subscriberClients[num_clients-1].ClientWebSocket.onopen = function() 
+	{
+		for(i = 0 ; i < 5; i++)
 		{	
 				sleep(randInt(10,40)*100)
-			    publisherIndex =randInt(0,4)
-			    topicIndex 	= 	randInt(0,4)
-			    message 	=   generateRandomString(randInt(4,8))
-			    interval 	=	randInt(1,10)
-			    console.log("publishing")
-				publisherClient[publisherIndex].publish(topics[topicIndex],message)
+			    subscriberIndex =	randInt(0,4)
+			    topicIndex 		= 	randInt(0,4)
+			    message 		=   generateRandomString(randInt(4,8))
+			    console.log("subscribing")
+				subscriberClients[subscriberIndex].subscribe(topics[topicIndex])
 			    //setTimeout(publisherClient[publisherIndex].publish(topics[topicIndex],message),interval*1000)
 
 		}
 	}
 }
 
-events_generate(10)
+subscription_generate(10)

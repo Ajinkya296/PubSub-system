@@ -26,10 +26,17 @@ class Subscription
 
 	add(topic,subscriber)
 	{
-		if(this.hashMap[topic] != undefined) 
-			this.hashMap[topic].push(subscriber)
+		if(this.hashMap[topic] != undefined) {
+			if(!(this.hashMap[topic].includes(subscriber)))
+			{
+				this.hashMap[topic].push(subscriber)
+			}
+		}
 		else
+		{
+			console.log("creating subscriber list for " +  topic)
 			this.hashMap[topic] = [subscriber]
+		}
 
 	}
 
@@ -90,18 +97,18 @@ console.log("UI connected")
 serverSocket.on('connection', function (websocket,req) {
 
 	//store sockets 
-	var user_id = 0 //req.headers['sec-websocket-key']
-	console.log(user_id + " connected")
-	clientWebSockets[user_id] = websocket
-
-	clientWebSockets[user_id].send("You are connected to server") 
+	
 
 	websocket.on('message', function (message) {
 
 			data = JSON.parse(message)
 
 		    console.log('received from client %s : %s ', data.user_id, data.msgText)
+		    var user_id = data.user_id 
+			console.log(user_id + " connected")
+			clientWebSockets[user_id] = websocket
 
+			clientWebSockets[user_id].send("You are connected to server") 
 		    msg_type = data.type  // PUBLISH or SUBCRIBE
 		    if(msg_type == "publish")
 		    {
@@ -115,7 +122,7 @@ serverSocket.on('connection', function (websocket,req) {
 		    else if(msg_type == "subscribe")
 		    {
 		    	UI_clientwebsocket.send( JSON.stringify({ "type" : "SUB" , "user_id" : data.user_id, "topic" : data.topic}))
-		    	onSubscribe( { id : data.user_id , "topic" : data.msgText})	
+		    	onSubscribe( { id : data.user_id , "topic" : data.topic})	
 		    }
 		    else if(msg_type == "unsubscribe")
 		    {
@@ -203,7 +210,7 @@ function onSubscribe(data) {
 	subscriber_id	= data.id
    	topic_name 		= data.topic
    	subscriptions.add(topic_name,subscriber_id)
-   	console.log("Subscription successfully added for %s", subscriptions.hashMap[topic_name])
+   	console.log("Subscription successfully added for %s", subscriptions.hashMap)
 }
 
 function onUnsubscribe(data) {	

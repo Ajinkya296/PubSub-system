@@ -83,6 +83,7 @@
       		      data =  JSON.parse(e.data)
                 if(data.type == undefined)
                 { // subscriptions heartbeat arrived
+                    console.log(e.data);
                     subscriptions = data
                 }
                 else{
@@ -145,10 +146,10 @@
                 <h3 >Subscriptions</h3>
                 <select class="form-control" id="sel1">
                   <option  selected disabled>Choose a topic</option>
-                  <option>1</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
+                  <option>Science</option>
+                  <option>Sports</option>
+                  <option>Politics</option>
+                  <option>Fashion</option>
                 </select>
                 <ul id="list" class= "list-group">  </ul>
             </div>
