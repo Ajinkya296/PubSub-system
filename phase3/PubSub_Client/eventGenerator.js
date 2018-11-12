@@ -41,7 +41,6 @@ function events_generate(num_clients)
 			    interval 	=	randInt(1,10)
 			    console.log("publishing")
 				publisherClient[publisherIndex].publish(topics[topicIndex],message)
-			    //setTimeout(publisherClient[publisherIndex].publish(topics[topicIndex],message),interval*1000)
 
 		}
 	}

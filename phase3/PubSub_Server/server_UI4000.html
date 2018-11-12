@@ -24,7 +24,7 @@
                 height:100%;
                 }
       .row {
-              height: 100%;
+              height: 80%;
               display: table-row;
           }
       .row .column {
@@ -55,7 +55,7 @@
                     display:table;
                     width: 100%;
                     margin-top: -50px;
-                    padding: 50px 0 0 0; /*set left/right padding according to needs*/
+                    padding: 50px 0 0 0; 
                     box-sizing: border-box;
                   }
       .centre_div{
@@ -174,6 +174,10 @@
 </script>
   </head>
   <body>
+  <div class="page-header" style="margin-bottom: 0px;margin-top: 10px;padding: 0px">
+  <h2 style="text-align: center;margin: 0px;">Server 0</h2>
+  <h4 style="text-align: center;"> Port:3000 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Topics : Sports, Politics </h4>
+  </div>
     <div class="container">
       <div class="row " >
           <div class="column  left_column">
@@ -181,10 +185,8 @@
                 <h2 >Subscriptions</h2>
                 <select class="form-control" id="sel1">
                   <option  selected disabled>Choose a topic</option>
-                  <option>Science</option>
                   <option>Sports</option>
                   <option>Politics</option>
-                  <option>Fashion</option>
                 </select>
                 <ul id="list" class= "list-group">  </ul>
             </div>

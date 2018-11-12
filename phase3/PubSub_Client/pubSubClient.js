@@ -25,10 +25,8 @@ class pubsubClient{
 
   constructor(){
     this.port = 3001
-    //if(Math.random() > 0.5)
-    //  this.port = 3001
+    this.server_name = "Server 1"
     this.ClientWebSocket = new WebSocket("ws://192.168.99.100:"+this.port);
-    //this.ClientWebSocket = new WebSocket("ws://localhost:4000");
     this.id = generateRandomID()
   }
 
@@ -45,10 +43,9 @@ class pubsubClient{
             msgText: message
           };
           console.log(publishMSG)
-          addNotif("Publisher " + this.id + " sent msg \"" + message +"\" on " + topicID)
+          addNotif("Publisher " + this.id + " sent msg \"" + message +"\" on " + topicID + " to " +  this.server_name)
           this.ClientWebSocket.send(JSON.stringify(publishMSG));
           console.log("Msg sent")
-
     }
     subscribe(topicID){
         var subscribeMSG = {
@@ -56,8 +53,8 @@ class pubsubClient{
           type:"subscribe",
           topic: topicID
         };
-        console.log("Subscriber "+ this.id +" subscribed to " + topicID + " on port " + this.port)
-        addNotif( "Subscriber "+ this.id +" subscribed to " + topicID)
+        console.log("Subscriber "+ this.id +" subscribed to " + topicID + " to " +  this.server_name)
+        addNotif( "Subscriber "+ this.id +" subscribed to " + topicID+ " to " +  this.server_name)
         this.ClientWebSocket.send(JSON.stringify(subscribeMSG));
         
     }

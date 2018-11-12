@@ -157,8 +157,6 @@ function connectToOther() {
 }
 			
 
-
-
 UI_socket.on('connection', function (UI_clientwebsocket,req) 
 {		
 		UI_clientwebsocket.send(JSON.stringify({" readyState" :UI_clientwebsocket.readyState}))
@@ -209,16 +207,13 @@ function forward(message,otherserverSocket){
 
 		otherserverSocket.send(message)
 }
-// This function will be called with different topic 
 function dispatch_events()
 {
 	UI_clientwebsocket.send(JSON.stringify(subscriptions.hashMap))
-	//console.log("\n******* Dispatching Events *******")
 	topics = Object.keys(eventQueues.hashMap)
-	//console.log(topics)
+
 	if(topics.length == 0)
 	{
-		//console.log("No topics registered\n")
 		return
 	}
 
