@@ -128,9 +128,12 @@ UI_client = null
 
 var otherSocket
 function connectToOther() {
+
+	sleep(500)
 	otherSocket = new WebSocket("ws://192.168.99.100:" + otherPort);
 	otherSocket.onopen = function(e){
 		console.log("Other Port Open")
+		console.log("Sent handshake")
 		otherSocket.send(JSON.stringify({"readyState" : otherSocket.readyState}),function(error){console.log("Sendng error: " +  error)})
 	}
 	otherSocket.onclose = function(e){
@@ -212,7 +215,7 @@ function dispatch_events()
 	UI_clientwebsocket.send(JSON.stringify(subscriptions.hashMap))
 	//console.log("\n******* Dispatching Events *******")
 	topics = Object.keys(eventQueues.hashMap)
-	console.log(topics)
+	//console.log(topics)
 	if(topics.length == 0)
 	{
 		//console.log("No topics registered\n")
@@ -221,8 +224,8 @@ function dispatch_events()
 
 	for(var topic of topics)
 	{ 
-		console.log(eventQueues.hashMap)
-		console.log(topic)
+		//console.log(eventQueues.hashMap)
+		//console.log(topic)
 		events = eventQueues.hashMap[topic]
 		subscribers = subscriptions.hashMap[topic]
 		

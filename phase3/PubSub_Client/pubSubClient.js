@@ -24,7 +24,7 @@ function addNotif(notif) {
 class pubsubClient{
 
   constructor(){
-    this.port = 3000
+    this.port = 3001
     //if(Math.random() > 0.5)
     //  this.port = 3001
     this.ClientWebSocket = new WebSocket("ws://192.168.99.100:"+this.port);

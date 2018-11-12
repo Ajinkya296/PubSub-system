@@ -47,4 +47,4 @@ function events_generate(num_clients)
 	}
 	
 }
-//events_generate(10)
+events_generate(10)
