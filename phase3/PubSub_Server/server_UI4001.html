@@ -1,0 +1,206 @@
+<!doctype html>
+<html>
+  <head>
+    <title>PubSub Server UI</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <style>
+      * { margin: 0; padding: 20; box-sizing: border-box; }
+      html {
+          height:100%;
+          overflow: scroll;
+          overflow-x: hidden;
+      }
+      ::-webkit-scrollbar {
+          width: 4px;  
+          
+      }
+      ::-webkit-scrollbar-thumb {
+          background: #039be5;
+      }
+      body,.container {
+                height:100%;
+                }
+      .row {
+              height: 100%;
+              display: table-row;
+          }
+      .row .column {
+                    display: table-cell;
+                    float: none;
+                  }
+      .left_column {   
+                      position:  relative;
+                      background: #039be5;
+                      width: 33%;
+                      height: 100%
+              }
+      .right_column {
+                  background: #EEEEEE; 
+                  width: 67%;
+                  height: 100%
+              }
+      .radio-label {
+                      display: inline-block;
+                      vertical-align: top;
+                      margin-right: 3%;
+                    }
+      .radio-input {
+                      display: inline-block;
+                      vertical-align: top;
+}
+      .container {
+                    display:table;
+                    width: 100%;
+                    margin-top: -50px;
+                    padding: 50px 0 0 0; /*set left/right padding according to needs*/
+                    box-sizing: border-box;
+                  }
+      .centre_div{
+                    margin: auto;
+                    position: absolute;
+                    top: 50%; left: 50%;
+                    transform: translate(-50%,-50%);
+                    background: #039be5;
+                    padding: 10px;
+                    width : 300px;
+                    text-align: center;
+
+                  }
+      .list-group{
+                    padding-top: 20px
+                  }
+      .area{
+              margin : 30px;
+              margin-top: 30px;
+              background-color: #EEEEEE;
+              height: 80%;
+            }
+      .notif-group{
+                    padding: 0;
+                    text-align: left;
+                  }
+      label {
+               display: inline-block;
+            }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+    </style>
+    <script>
+      
+      $(function () {
+      	var connection_UI = new WebSocket('ws://192.168.99.100:4001');
+        //var connection_UI = new WebSocket('ws://localhost:3000');
+        connection_UI.onerror= function (e) {console.log(e)}
+        connection_UI.onopen= function (e) {console.log("Connected");console.log(connection_UI)}
+      	connection_UI.onmessage = function (e) {
+      		      data =  JSON.parse(e.data)
+                if(data.type == undefined)
+                { // subscriptions heartbeat arrived
+                    console.log(e.data);
+                    subscriptions = data
+                }
+                else if(data.readyState != undefined)
+                {
+                  console.log("readyState : " + data.readyState)
+                }
+                else{
+
+                  console.log(e.data);
+                  addNotif(data)
+                }
+                $('select').on('change', function(e){
+                  topic =  this.value
+                  addSubscriberList(subscriptions,topic)
+                  console.log(this.value);
+                });
+    	       };	
+        
+      });
+
+      function addSubscriberList(subscriptions,topic) {
+
+          var ul = document.getElementById("list");
+          ul.innerHTML = ''
+          for(var subscriber of subscriptions[topic]){
+            var li = document.createElement("li");
+            var div_elem = document.createElement("div");
+            div_elem.appendChild(document.createTextNode("Subscriber " + subscriber));
+            li.appendChild(div_elem);
+            li.setAttribute("class", "list-group-item"); 
+            li.setAttribute("style", "background-color:#f1f2f6; color: #495057;font-size: 1.25em ;  padding: 0.5rem 0.5rem;");
+            ul.appendChild(li);
+          }
+        };
+        function addNotif(notif) {
+          type = notif.type
+
+          var btn = document.createElement("button");
+          switch(type)
+          {
+            case "PUB": text = "Publisher " + notif.user_id + " pubished \"" +  notif.message + "\" on " + notif.topic
+                        btn.className = 'btn' + ' btn-primary'
+                        btn.innerHTML = "PUB"
+                        break;
+            case "SUB": text = "Subscriber " + notif.user_id + " subscribed to " +  notif.topic
+                        btn.className = 'btn' + ' btn-success'
+                        btn.innerHTML = "SUB"
+                        break;
+            case "DIS": text = "Subscriber " + notif.user_id + " recieved \"" +  notif.message + "\" on " + notif.topic
+                        btn.className = 'btn' + ' btn-warning'
+                        btn.innerHTML = "NOT"
+                        break;
+          }
+          var ul = document.getElementById("notif");
+          var li = document.createElement("li");
+
+          var div_elem = document.createElement("div");
+          btn.setAttribute("style" ,  "float: left;height: 30px;width: 50px;margin-right: 5px;margin-top: -2px;padding:6px")
+
+          div_elem.appendChild(btn);
+          div_elem.appendChild(document.createTextNode("["+new Date().toLocaleString().split(" ")[1] + "] " + text));
+          li.appendChild(div_elem);
+          li.setAttribute("class", "list-group-item"); 
+          li.setAttribute("style", "background-color:#f1f2f6; color: #495057;font-size: 1.25em ;  padding: 0.5rem 0.5rem;");
+          ul.appendChild(li);
+        };
+</script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row " >
+          <div class="column  left_column">
+            <div class = "centre_div center-block">
+                <h2 >Subscriptions</h2>
+                <select class="form-control" id="sel1">
+                  <option  selected disabled>Choose a topic</option>
+                  <option>Science</option>
+                  <option>Sports</option>
+                  <option>Politics</option>
+                  <option>Fashion</option>
+                </select>
+                <ul id="list" class= "list-group">  </ul>
+            </div>
+          </div>
+          <div class="column right_column" >
+            <h1 style="text-align: center;">Notifications</h1>
+            <div class="area" style="overflow-y: scroll;">
+                <ul class= "notif-group" id = "notif">
+                </ul>
+            </div>
+          </div>
+      </div>
+    </div>
+
+  </body>
+</html>
+
+
+
+
+
+
+

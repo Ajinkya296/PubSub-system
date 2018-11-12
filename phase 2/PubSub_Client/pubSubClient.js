@@ -24,9 +24,15 @@ function addNotif(notif) {
 class pubsubClient{
 
   constructor(){
-    this.ClientWebSocket = new WebSocket("ws://localhost:4000");//server uRL here
+    this.ClientWebSocket = new WebSocket("ws://192.168.99.100:4000");
+    //this.ClientWebSocket = new WebSocket("ws://localhost:4000");
     this.id = generateRandomID()
   }
+
+    connect()
+    {
+      this.ClientWebSocket.send("handshake")
+    }
     publish(topicID, message){
           
           var publishMSG = {

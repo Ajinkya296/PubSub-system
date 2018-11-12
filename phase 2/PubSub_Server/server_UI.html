@@ -92,7 +92,8 @@
     <script>
       
       $(function () {
-      	var connection_UI = new WebSocket('ws://localhost:3000');
+      	var connection_UI = new WebSocket('ws://192.168.99.100:3000');
+        //var connection_UI = new WebSocket('ws://localhost:3000');
       	connection_UI.onmessage = function (e) {
       		      data =  JSON.parse(e.data)
                 if(data.type == undefined)

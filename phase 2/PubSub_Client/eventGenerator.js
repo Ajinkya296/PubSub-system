@@ -23,16 +23,23 @@ function sleep( time ){
     while(new Date().getTime() < current + time){  } 
 }
 
+function register_connection(client,connected)
+{
+	console.log("Registered connection" )
+	connected.push(client)
+}
 
 function events_generate(num_clients)
 {
+	connected = []
     var publisherClient = new Array(4)
 	for(i=0; i<num_clients; i++){
 		publisherClient[i]  = new pubsubClient()
+		sleep(100)
+//register_connection(publisherClient[i],connected)
 	}
-	publisherClient[num_clients-1].ClientWebSocket.onopen = function() 
-	{
-		for(i=0;i <10;i++)
+	publisherClient[num_clients-1].ClientWebSocket.onopen = function () {
+		for(i = 0;i < 10; i++)
 		{	
 				sleep(randInt(10,40)*100)
 			    publisherIndex =randInt(0,4)
@@ -45,5 +52,6 @@ function events_generate(num_clients)
 
 		}
 	}
+	
 }
 events_generate(10)

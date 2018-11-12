@@ -9,10 +9,14 @@ app.use(bodyParser.urlencoded({
 }));
 
 
+const UI_socket 	= new WebSocket.Server({host: "0.0.0.0", port:3000 });
+
+const serverSocket 	= new WebSocket.Server({host: "0.0.0.0", port:4000 });
+/*
 const UI_socket 	= new WebSocket.Server({host: "localhost", port:3000 });
 
 const serverSocket 	= new WebSocket.Server({host: "localhost", port:4000 });
-
+*/
 console.log("WebSocket server listening at " + "localhost" + ":" + 3000)
 
 console.log("UI WebSocket server listening at " + "localhost" + ":" + 4000)
@@ -20,7 +24,9 @@ class Subscription
 {
 	/* Insert new subscriber in list for a topic
 	*/
-	constructor(){
+
+	constructor()
+	{
     	this.hashMap = {}
 	}
 
@@ -99,35 +105,37 @@ serverSocket.on('connection', function (websocket,req) {
 	//store sockets 
 	
 
-	websocket.on('message', function (message) {
+	websocket.on('message', function (message) {	
 
-			data = JSON.parse(message)
 
-		    console.log('received from client %s : %s ', data.user_id, data.msgText)
-		    var user_id = data.user_id 
-			console.log(user_id + " connected")
-			clientWebSockets[user_id] = websocket
+				data = JSON.parse(message)
 
-			clientWebSockets[user_id].send("You are connected to server") 
-		    msg_type = data.type  // PUBLISH or SUBCRIBE
-		    if(msg_type == "publish")
-		    {
-				console.log("Publish received")
+			    console.log('received from client %s : %s ', data.user_id, data.msgText)
+			    var user_id = data.user_id 
+				console.log(user_id + " connected")
+				clientWebSockets[user_id] = websocket
 
-				UI_clientwebsocket.send( JSON.stringify({ "type" : "PUB" , "user_id" : data.user_id, "topic" : data.topic, "message" : data.msgText}))
-		    	onPublish( { "topic" : data.topic, "message" : data.msgText} )
-		    	
+				clientWebSockets[user_id].send("You are connected to server") 
+			    msg_type = data.type  // PUBLISH or SUBCRIBE
+			    if(msg_type == "publish")
+			    {
+					console.log("Publish received")
 
-		    }
-		    else if(msg_type == "subscribe")
-		    {
-		    	UI_clientwebsocket.send( JSON.stringify({ "type" : "SUB" , "user_id" : data.user_id, "topic" : data.topic}))
-		    	onSubscribe( { id : data.user_id , "topic" : data.topic})	
-		    }
-		    else if(msg_type == "unsubscribe")
-		    {
-		    	onUnsubscribe( { id : user_id ,"topic" : msg_parts[1]})	
-		    }
+					UI_clientwebsocket.send( JSON.stringify({ "type" : "PUB" , "user_id" : data.user_id, "topic" : data.topic, "message" : data.msgText}))
+			    	onPublish( { "topic" : data.topic, "message" : data.msgText} )
+			    	
+
+			    }
+			    else if(msg_type == "subscribe")
+			    {
+			    	UI_clientwebsocket.send( JSON.stringify({ "type" : "SUB" , "user_id" : data.user_id, "topic" : data.topic}))
+			    	onSubscribe( { id : data.user_id , "topic" : data.topic})	
+			    }
+			    else if(msg_type == "unsubscribe")
+			    {
+			    	onUnsubscribe( { id : user_id ,"topic" : msg_parts[1]})	
+			    }
+
 
   	})
 
@@ -230,12 +238,12 @@ function onUnsubscribe(data) {
 
 
 app.get('/', function (req, res) {
-   	res.sendFile('index.html',{ root : __dirname});
+   	res.sendFile('server_UI.html',{ root : __dirname});
 })
 
 
 
-var server 	= app.listen(8080, 'localhost', function () {
+var server 	= app.listen(8080, '0.0.0.0', function () {
    var host = server.address().address
    var port = server.address().port
    

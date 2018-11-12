@@ -1,0 +1,19 @@
+version: "3.2"
+services:
+  server_0:
+    build:
+      .
+    ports:
+      - "3000:3000"
+      - "4000:4000"
+      - "8080:8080"
+    environment:
+      - MY_PORT=3000
+  server_1:
+    image: pubsubserver_serverr_0
+    ports:
+      - "3001:3001"
+      - "4001:4001"
+      - "8081:8081"
+    environment:
+      - MY_PORT=3001
